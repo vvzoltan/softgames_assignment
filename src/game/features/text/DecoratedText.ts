@@ -1,15 +1,12 @@
 import { CanvasTextMetrics, Container, Sprite, Text, TextStyle, TextStyleFontWeight } from "pixi.js";
 
 
-export type Icon = "boo" | "coin" | "flower" | "fuzzy" | "goomba" | "mushroom"
-
-
 export class DecoratedText extends Container {
 
     static readonly PLACEHOLDER = " ‎ ‎ ‎ "
 
     
-    constructor(private readonly string: string, private readonly icons: Icon[], private readonly size: number = 400) {
+    constructor(private readonly string: string, private readonly icons: string[], private readonly size: number = 400) {
         super()
 
         const weights: TextStyleFontWeight[] = ["200", "300", "400", "500", "600", "700"]
@@ -24,7 +21,7 @@ export class DecoratedText extends Container {
         const indexes = this.placeholderIndexes(string, DecoratedText.PLACEHOLDER)
         const { coords, metrics } =  this.getCoordinates(text, indexes)
         coords.forEach((coords, index) => {
-            const icon = Sprite.from(icons[index] + ".png")
+            const icon = Sprite.from(icons[index])
             icon.position.set(coords.x, coords.y)
             icon.anchor.set(0.5)
             icon.height = metrics.lineHeight

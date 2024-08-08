@@ -1,5 +1,6 @@
 import { gsap, Linear } from "gsap"
 import { Sprite, Texture } from "pixi.js"
+import { gameAssets } from "../../config/GameAssets"
 
 export type Suite = "diamonds" | "hearts" | "clubs" | "spades"
 export type Rank = "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "j" | "q" | "k" | "a"
@@ -7,11 +8,13 @@ export type Rank = "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "j" | 
 
 export class Card extends Sprite {
 
-    private showsFace: boolean = false
+    private _showsFace: boolean = false
+
+    static readonly FLIP_DURATION = 0.4
 
 
     constructor(readonly suite: Suite, readonly rank: Rank) {
-        super(Texture.from("cards/card_back.png"))
+        super(Texture.from(gameAssets.cardBack))
         this.anchor.set(0.5, 0.5)
     }
 
@@ -28,13 +31,13 @@ export class Card extends Sprite {
     
     flip() {
         const timeline = gsap.timeline()
-        timeline.to(this.scale, { x: 0, duration: 0.2, ease: Linear.easeIn })
+        timeline.to(this.scale, { x: 0, duration: Card.FLIP_DURATION / 2, ease: Linear.easeIn })
         timeline.to(this.scale, {
             x: 1,
-            duration: 0.2,
+            duration: Card.FLIP_DURATION / 2,
             onStart: () => {
-                this.showsFace = !this.showsFace
-                if (this.showsFace) {
+                this._showsFace = !this._showsFace
+                if (this._showsFace) {
                     this.showFront()
                 } else {
                     this.showBack()
@@ -47,7 +50,7 @@ export class Card extends Sprite {
 
 
     private getTexture(front: boolean) {
-        return Texture.from(front ? ("cards/card_" + this.suite + "_" + this.rank + ".png") : ("cards/card_back.png"))
+        return Texture.from(front ? gameAssets.getCardFace(this.suite, this.rank) : gameAssets.cardBack)
     }
 
 }

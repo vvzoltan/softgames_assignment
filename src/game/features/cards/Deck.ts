@@ -7,7 +7,7 @@ export class Deck {
     readonly cards: Card[]
     readonly coords: Point
 
-    private static OFFSET = 3
+    static readonly OFFSET = 3
 
 
     constructor(cards: Card[] = []) {

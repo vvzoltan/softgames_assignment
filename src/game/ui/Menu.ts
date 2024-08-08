@@ -8,7 +8,9 @@ export class Menu extends Container {
     private readonly _items: MenuItem[] = ["Cards", "Text", "Particles"]
     private _selected?: MenuButton
 
-    
+    private static readonly COLOR_BACKGROUND = 0x666666
+
+
     constructor(width: number, listener: (item: MenuItem) => void) {
         super()
         this.addChild(this.getBackground(width))
@@ -20,14 +22,14 @@ export class Menu extends Container {
         this._items.forEach((value, index) => {
             const button = new MenuButton(width / 3, 50, value)
             button.x = (width / 3) * index
-            button.on("pointerup", () => { 
+            button.on("pointerup", () => {
                 if (this._selected) {
                     this._selected.onDeselected()
                 }
                 this._selected = button
                 button.onSelected()
                 listener(value)
-             })
+            })
             button.on("mouseover", () => button.onOver())
             button.on("mouseleave", () => button.onOut())
             button.on("mousedown", () => button.onDown())
@@ -40,7 +42,7 @@ export class Menu extends Container {
     private getBackground(width: number): Graphics {
         const shape = new Graphics()
         shape.rect(0, 0, width, 50)
-        shape.fill({ color: 0x666666 })
+        shape.fill({ color: Menu.COLOR_BACKGROUND })
         return shape
     }
 
@@ -50,11 +52,17 @@ export class Menu extends Container {
 
 class MenuButton extends Graphics {
 
+    private static readonly COLOR_REGULAR = 0x593e67
+    private static readonly TINT_OVER = 0x84495f
+    private static readonly ALPHA_REGULER = 1
+    private static readonly ALPHA_DOWN = 0.5
+
+
     constructor(width: number, height: number, title: string) {
         super()
 
         this.rect(0, 0, width, height)
-        this.fill({ color: 0x593e67 })
+        this.fill({ color: MenuButton.COLOR_REGULAR })
 
         const label = new Text({ text: title, style: new TextStyle({ fill: 0xffffff, fontSize: 24 }) })
         label.anchor.set(0.5)
@@ -72,7 +80,7 @@ class MenuButton extends Graphics {
 
 
     onOver() {
-        this.tint = 0x84495f
+        this.tint = MenuButton.TINT_OVER
     }
 
 
@@ -82,12 +90,12 @@ class MenuButton extends Graphics {
 
 
     onDown() {
-        this.alpha = 0.5
+        this.alpha = MenuButton.ALPHA_DOWN
     }
 
 
     onUp() {
-        this.alpha = 1.0
+        this.alpha = MenuButton.ALPHA_REGULER
     }
 
 

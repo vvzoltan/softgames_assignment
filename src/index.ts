@@ -1,5 +1,5 @@
 import { Application, Assets } from "pixi.js"
-import { Game } from "./game"
+import { Game } from "./game/Game"
 
 
 window.addEventListener('load', async () => {

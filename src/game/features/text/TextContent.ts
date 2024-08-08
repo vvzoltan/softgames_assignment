@@ -1,21 +1,30 @@
 import { Container } from "pixi.js";
-import { DecoratedText, Icon } from "./DecoratedText";
+import { DecoratedText } from "./DecoratedText";
 import { GameContent } from "../GameContent";
+import { gameAssets } from "../../config/GameAssets";
 
 
 export class TextContent extends Container implements GameContent {
 
     private _interval?: NodeJS.Timeout
     private _decoratedText?: DecoratedText
-    private _size: {width: number, height: number} = {width: 0, height: 0}
+    private _size: { width: number, height: number } = { width: 0, height: 0 }
 
+    static readonly TEXT_INTERVAL = 2_000
     static readonly LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    static readonly ICONS: Icon[] = ["boo", "coin", "flower", "fuzzy", "goomba", "mushroom"]
+    static readonly ICONS: string[] = [
+        gameAssets.icons.boo,
+        gameAssets.icons.coin,
+        gameAssets.icons.flower,
+        gameAssets.icons.fuzzy,
+        gameAssets.icons.goomba,
+        gameAssets.icons.mushroom
+    ]
 
 
     constructor() {
         super()
-        this._interval = setInterval(() => { this.generateNewText() }, 2_000)
+        this._interval = setInterval(() => { this.generateNewText() }, TextContent.TEXT_INTERVAL)
         this.generateNewText()
     }
 
@@ -49,19 +58,19 @@ export class TextContent extends Container implements GameContent {
     }
 
 
-    private getDecoratedString(): [string, Icon[]] {
+    private getDecoratedString(): [string, string[]] {
         const words = TextContent.LOREM_IPSUM.split(" ")
         const numberOfWords = Math.floor((words.length - 3) * Math.random()) + 3
         const numberOfIcons = Math.round(Math.random() * (numberOfWords / 3))
-        const icons = Array.from({length: numberOfIcons}, () => TextContent.ICONS[Math.floor(Math.random() * TextContent.ICONS.length)])
-        const availableIconPositions = Array.from({length: numberOfWords}, (_, index) => index)
+        const icons = Array.from({ length: numberOfIcons }, () => TextContent.ICONS[Math.floor(Math.random() * TextContent.ICONS.length)])
+        const availableIconPositions = Array.from({ length: numberOfWords }, (_, index) => index)
         const iconPositions = Array.from({ length: numberOfIcons }, () => {
             const positionIndex = Math.floor(Math.random() * availableIconPositions.length)
             const position = availableIconPositions[positionIndex]
             availableIconPositions.splice(positionIndex, 1)
             return position
         }).sort((a, b) => a - b)
-        const decoratedText = Array.from({length: numberOfWords + numberOfIcons}, (_, index) => {
+        const decoratedText = Array.from({ length: numberOfWords + numberOfIcons }, (_, index) => {
             const offsetIndex = index - (numberOfIcons - iconPositions.length)
             if (offsetIndex == iconPositions[0]) {
                 iconPositions.shift()

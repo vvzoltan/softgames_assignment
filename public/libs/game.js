@@ -9009,7 +9009,7 @@ TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
 /***/ }),
 
-/***/ 468:
+/***/ 733:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -9022,16 +9022,17 @@ const Menu_1 = __webpack_require__(963);
 const Table_1 = __webpack_require__(111);
 const FullScreenButton_1 = __webpack_require__(21);
 const Config_1 = __webpack_require__(478);
+const GameAssets_1 = __webpack_require__(687);
 class Game {
     constructor(stage, ticker) {
         this.stage = stage;
         this.ticker = ticker;
         this._content = new pixi_js_1.Container();
         this._ui = new pixi_js_1.Container();
-        this._background = this.stage.addChild(new pixi_js_1.Sprite({ texture: pixi_js_1.Texture.from("background.jpg"), width: Config_1.Config.width, height: Config_1.Config.height }));
+        this._background = this.stage.addChild(new pixi_js_1.Sprite({ texture: pixi_js_1.Texture.from(GameAssets_1.gameAssets.background), width: Config_1.Config.width, height: Config_1.Config.height }));
         this._background.alpha = 0.5;
         this._fullScreenButton = this._ui.addChild(this.getFullScreenButton());
-        this._menu = this._ui.addChild(new Menu_1.Menu(Config_1.Config.width - 20, item => this.switchContent(item)));
+        this._menu = this._ui.addChild(new Menu_1.Menu(Config_1.Config.width - (Game.PADDING * 2), item => this.switchContent(item)));
         this.stage.addChild(this._content);
         this.stage.addChild(this._ui);
         this.addFrameRateDisplay();
@@ -9053,8 +9054,8 @@ class Game {
             size = { width: Config_1.Config.width, height: Config_1.Config.height };
         }
         this._background.setSize(size.width, size.height);
-        this._fullScreenButton.position.set(size.width - this._fullScreenButton.width - 10, 10);
-        this._menu.position.set((size.width - this._menu.width) / 2, size.height - this._menu.height - 10);
+        this._fullScreenButton.position.set(size.width - this._fullScreenButton.width - Game.PADDING, Game.PADDING);
+        this._menu.position.set((size.width - this._menu.width) / 2, size.height - this._menu.height - Game.PADDING);
         (_a = this._currentContent) === null || _a === void 0 ? void 0 : _a.resize(size.width, size.height);
     }
     switchContent(item) {
@@ -9087,12 +9088,13 @@ class Game {
     }
     addFrameRateDisplay() {
         const text = new pixi_js_1.Text({ style: new pixi_js_1.TextStyle({ fill: 0xFFFFFF, fontWeight: "400", fontSize: 12 }) });
-        text.position.set(10);
+        text.position.set(Game.PADDING);
         this._ui.addChild(text);
         this.ticker.add(ticker => { text.text = "FPS: " + ticker.FPS.toFixed(2); });
     }
 }
 exports.Game = Game;
+Game.PADDING = 10;
 
 
 /***/ }),
@@ -9111,6 +9113,31 @@ exports.Config = {
 
 /***/ }),
 
+/***/ 687:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.gameAssets = void 0;
+exports.gameAssets = {
+    background: "background.jpg",
+    fullScreenEnter: "full_enter.png",
+    fullScreenExit: "full_exit.png",
+    cardBack: "cards/card_back.png",
+    getCardFace: (suite, rank) => "cards/card_" + suite + "_" + rank + ".png",
+    icons: {
+        boo: "boo.png",
+        coin: "coin.png",
+        flower: "flower.png",
+        fuzzy: "fuzzy.png",
+        goomba: "goomba.png",
+        mushroom: "mushroom.png"
+    }
+};
+
+
+/***/ }),
+
 /***/ 553:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -9119,12 +9146,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Card = void 0;
 const gsap_1 = __webpack_require__(880);
 const pixi_js_1 = __webpack_require__(836);
+const GameAssets_1 = __webpack_require__(687);
 class Card extends pixi_js_1.Sprite {
     constructor(suite, rank) {
-        super(pixi_js_1.Texture.from("cards/card_back.png"));
+        super(pixi_js_1.Texture.from(GameAssets_1.gameAssets.cardBack));
         this.suite = suite;
         this.rank = rank;
-        this.showsFace = false;
+        this._showsFace = false;
         this.anchor.set(0.5, 0.5);
     }
     showFront() {
@@ -9135,13 +9163,13 @@ class Card extends pixi_js_1.Sprite {
     }
     flip() {
         const timeline = gsap_1.gsap.timeline();
-        timeline.to(this.scale, { x: 0, duration: 0.2, ease: gsap_1.Linear.easeIn });
+        timeline.to(this.scale, { x: 0, duration: Card.FLIP_DURATION / 2, ease: gsap_1.Linear.easeIn });
         timeline.to(this.scale, {
             x: 1,
-            duration: 0.2,
+            duration: Card.FLIP_DURATION / 2,
             onStart: () => {
-                this.showsFace = !this.showsFace;
-                if (this.showsFace) {
+                this._showsFace = !this._showsFace;
+                if (this._showsFace) {
                     this.showFront();
                 }
                 else {
@@ -9153,10 +9181,11 @@ class Card extends pixi_js_1.Sprite {
         timeline.play();
     }
     getTexture(front) {
-        return pixi_js_1.Texture.from(front ? ("cards/card_" + this.suite + "_" + this.rank + ".png") : ("cards/card_back.png"));
+        return pixi_js_1.Texture.from(front ? GameAssets_1.gameAssets.getCardFace(this.suite, this.rank) : GameAssets_1.gameAssets.cardBack);
     }
 }
 exports.Card = Card;
+Card.FLIP_DURATION = 0.4;
 
 
 /***/ }),
@@ -9207,7 +9236,7 @@ class Table extends pixi_js_1.Container {
         this._deckLeft = new Deck_1.Deck([...this.generateCards()]);
         this._deckRight = new Deck_1.Deck();
         this._deckLeft.cards.forEach(card => { this.addChild(card); });
-        this._interval = setInterval(() => { this.moveCard(); }, 1000);
+        this._interval = setInterval(() => { this.moveCard(); }, Table.DRAW_INTERVAL);
     }
     remove() {
         this.removeFromParent();
@@ -9240,13 +9269,13 @@ class Table extends pixi_js_1.Container {
                     this._timelines.splice(index, 1);
             }
         });
-        timeline.to(card.position, { x: destination.x, duration: 2, ease: gsap_1.Cubic.easeInOut }, 0);
-        timeline.to(card.position, { y: Math.max(card.y, destination.y) + 50, duration: 1, ease: gsap_1.Sine.easeOut }, 0);
-        timeline.to(card.position, { y: destination.y, duration: 1, ease: gsap_1.Sine.easeIn }, 1);
+        timeline.to(card.position, { x: destination.x, duration: Table.CARD_MOVE_DURATION, ease: gsap_1.Cubic.easeInOut }, 0);
+        timeline.to(card.position, { y: Math.max(card.y, destination.y) + 50, duration: Table.CARD_MOVE_DURATION / 2, ease: gsap_1.Sine.easeOut }, 0);
+        timeline.to(card.position, { y: destination.y, duration: Table.CARD_MOVE_DURATION / 2, ease: gsap_1.Sine.easeIn }, Table.CARD_MOVE_DURATION / 2);
         timeline.call(() => {
             card.flip();
             this.setChildIndex(card, this.children.length - 1);
-        }, [], 0.8);
+        }, [], (Table.CARD_MOVE_DURATION / 2) - (Card_1.Card.FLIP_DURATION / 2));
         timeline.play();
     }
     *generateCards() {
@@ -9261,6 +9290,8 @@ class Table extends pixi_js_1.Container {
 }
 exports.Table = Table;
 Table.CARDS = 144;
+Table.DRAW_INTERVAL = 1000;
+Table.CARD_MOVE_DURATION = 2;
 
 
 /***/ }),
@@ -9274,13 +9305,13 @@ exports.Fire = void 0;
 const particle_emitter_1 = __webpack_require__(411);
 const pixi_js_1 = __webpack_require__(836);
 class Fire extends pixi_js_1.Container {
-    constructor(ticker) {
+    constructor(_ticker) {
         super();
-        this.ticker = ticker;
+        this._ticker = _ticker;
         this._particleContainer = new pixi_js_1.Container();
         this.addChild(this._particleContainer);
         const emitter = this.buildEmitter(this._particleContainer);
-        this.ticker.add(ticker => emitter.update(ticker.deltaTime / 50));
+        this._ticker.add(_ticker => emitter.update(_ticker.deltaTime / 50));
     }
     remove() {
         this.removeFromParent();
@@ -9393,7 +9424,7 @@ class DecoratedText extends pixi_js_1.Container {
         const indexes = this.placeholderIndexes(string, DecoratedText.PLACEHOLDER);
         const { coords, metrics } = this.getCoordinates(text, indexes);
         coords.forEach((coords, index) => {
-            const icon = pixi_js_1.Sprite.from(icons[index] + ".png");
+            const icon = pixi_js_1.Sprite.from(icons[index]);
             icon.position.set(coords.x, coords.y);
             icon.anchor.set(0.5);
             icon.height = metrics.lineHeight;
@@ -9458,11 +9489,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TextContent = void 0;
 const pixi_js_1 = __webpack_require__(836);
 const DecoratedText_1 = __webpack_require__(469);
+const GameAssets_1 = __webpack_require__(687);
 class TextContent extends pixi_js_1.Container {
     constructor() {
         super();
         this._size = { width: 0, height: 0 };
-        this._interval = setInterval(() => { this.generateNewText(); }, 2000);
+        this._interval = setInterval(() => { this.generateNewText(); }, TextContent.TEXT_INTERVAL);
         this.generateNewText();
     }
     remove() {
@@ -9512,8 +9544,16 @@ class TextContent extends pixi_js_1.Container {
     }
 }
 exports.TextContent = TextContent;
+TextContent.TEXT_INTERVAL = 2000;
 TextContent.LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-TextContent.ICONS = ["boo", "coin", "flower", "fuzzy", "goomba", "mushroom"];
+TextContent.ICONS = [
+    GameAssets_1.gameAssets.icons.boo,
+    GameAssets_1.gameAssets.icons.coin,
+    GameAssets_1.gameAssets.icons.flower,
+    GameAssets_1.gameAssets.icons.fuzzy,
+    GameAssets_1.gameAssets.icons.goomba,
+    GameAssets_1.gameAssets.icons.mushroom
+];
 
 
 /***/ }),
@@ -9525,12 +9565,13 @@ TextContent.ICONS = ["boo", "coin", "flower", "fuzzy", "goomba", "mushroom"];
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FullScreenButton = void 0;
 const pixi_js_1 = __webpack_require__(836);
+const GameAssets_1 = __webpack_require__(687);
 class FullScreenButton extends pixi_js_1.Sprite {
     constructor(onToggle) {
         super();
         this._isInFullScreen = false;
-        this._enterIcon = pixi_js_1.Texture.from("full_enter.png");
-        this._exitIcon = pixi_js_1.Texture.from("full_exit.png");
+        this._enterIcon = pixi_js_1.Texture.from(GameAssets_1.gameAssets.fullScreenEnter);
+        this._exitIcon = pixi_js_1.Texture.from(GameAssets_1.gameAssets.fullScreenExit);
         this.texture = this._enterIcon;
         this.interactive = true;
         this.cursor = "pointer";
@@ -9582,16 +9623,17 @@ class Menu extends pixi_js_1.Container {
     getBackground(width) {
         const shape = new pixi_js_1.Graphics();
         shape.rect(0, 0, width, 50);
-        shape.fill({ color: 0x666666 });
+        shape.fill({ color: Menu.COLOR_BACKGROUND });
         return shape;
     }
 }
 exports.Menu = Menu;
+Menu.COLOR_BACKGROUND = 0x666666;
 class MenuButton extends pixi_js_1.Graphics {
     constructor(width, height, title) {
         super();
         this.rect(0, 0, width, height);
-        this.fill({ color: 0x593e67 });
+        this.fill({ color: MenuButton.COLOR_REGULAR });
         const label = new pixi_js_1.Text({ text: title, style: new pixi_js_1.TextStyle({ fill: 0xffffff, fontSize: 24 }) });
         label.anchor.set(0.5);
         label.position.set(width / 2, height / 2);
@@ -9603,16 +9645,16 @@ class MenuButton extends pixi_js_1.Graphics {
         this.interactive = value;
     }
     onOver() {
-        this.tint = 0x84495f;
+        this.tint = MenuButton.TINT_OVER;
     }
     onOut() {
         this.tint = 0xFFFFFF;
     }
     onDown() {
-        this.alpha = 0.5;
+        this.alpha = MenuButton.ALPHA_DOWN;
     }
     onUp() {
-        this.alpha = 1.0;
+        this.alpha = MenuButton.ALPHA_REGULER;
     }
     onSelected() {
         this.onOver();
@@ -9623,6 +9665,10 @@ class MenuButton extends pixi_js_1.Graphics {
         this.enabled = true;
     }
 }
+MenuButton.COLOR_REGULAR = 0x593e67;
+MenuButton.TINT_OVER = 0x84495f;
+MenuButton.ALPHA_REGULER = 1;
+MenuButton.ALPHA_DOWN = 0.5;
 
 
 /***/ }),
@@ -9642,7 +9688,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const pixi_js_1 = __webpack_require__(836);
-const game_1 = __webpack_require__(468);
+const Game_1 = __webpack_require__(733);
 window.addEventListener('load', () => __awaiter(void 0, void 0, void 0, function* () {
     const canvas = document.querySelector('div');
     if (!canvas) {
@@ -9663,7 +9709,7 @@ window.addEventListener('load', () => __awaiter(void 0, void 0, void 0, function
         app.renderer.resize(window.innerWidth, window.innerHeight);
     });
     yield pixi_js_1.Assets.load(['/assets/sheet.json']);
-    new game_1.Game(app.stage, app.ticker);
+    new Game_1.Game(app.stage, app.ticker);
 }));
 
 

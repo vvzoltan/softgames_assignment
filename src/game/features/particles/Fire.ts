@@ -7,11 +7,11 @@ export class Fire extends Container implements GameContent {
 
     private readonly _particleContainer = new Container()
 
-    constructor(private readonly ticker: Ticker) {
+    constructor(private readonly _ticker: Ticker) {
         super()
         this.addChild(this._particleContainer)
         const emitter = this.buildEmitter(this._particleContainer)
-        this.ticker.add(ticker => emitter.update(ticker.deltaTime / 50))
+        this._ticker.add(_ticker => emitter.update(_ticker.deltaTime / 50))
     }
 
 

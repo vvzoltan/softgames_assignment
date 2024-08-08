@@ -1,12 +1,13 @@
 import { Sprite, Texture } from "pixi.js";
+import { gameAssets } from "../config/GameAssets";
 
 
 export class FullScreenButton extends Sprite {
 
     private _isInFullScreen = false
 
-    private readonly _enterIcon = Texture.from("full_enter.png")
-    private readonly _exitIcon = Texture.from("full_exit.png")
+    private readonly _enterIcon = Texture.from(gameAssets.fullScreenEnter)
+    private readonly _exitIcon = Texture.from(gameAssets.fullScreenExit)
 
 
     constructor(onToggle: (isFullScreen: boolean) => void) {

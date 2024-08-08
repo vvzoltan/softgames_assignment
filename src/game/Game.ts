@@ -1,11 +1,12 @@
 import { Container, Ticker, Text, TextStyle, Texture, Sprite } from "pixi.js";
-import { TextContent } from "./game/features/text/TextContent";
-import { Fire } from "./game/features/particles/Fire";
-import { Menu, MenuItem } from "./game/ui/Menu";
-import { Table } from "./game/features/cards/Table";
-import { FullScreenButton } from "./game/ui/FullScreenButton";
-import { Config } from "./game/config/Config";
-import { GameContent } from "./game/features/GameContent";
+import { TextContent } from "./features/text/TextContent";
+import { Fire } from "./features/particles/Fire";
+import { Menu, MenuItem } from "./ui/Menu";
+import { Table } from "./features/cards/Table";
+import { FullScreenButton } from "./ui/FullScreenButton";
+import { Config } from "./config/Config";
+import { GameContent } from "./features/GameContent";
+import { gameAssets } from "./config/GameAssets";
 
 
 export class Game {
@@ -18,12 +19,14 @@ export class Game {
 
     private _currentContent?: GameContent
 
+    private static readonly PADDING = 10
+
 
     constructor(private readonly stage: Container, private readonly ticker: Ticker) {
-        this._background = this.stage.addChild(new Sprite({ texture: Texture.from("background.jpg"), width: Config.width, height: Config.height }))
+        this._background = this.stage.addChild(new Sprite({ texture: Texture.from(gameAssets.background), width: Config.width, height: Config.height }))
         this._background.alpha = 0.5
         this._fullScreenButton = this._ui.addChild(this.getFullScreenButton())
-        this._menu = this._ui.addChild(new Menu(Config.width - 20, item => this.switchContent(item)))
+        this._menu = this._ui.addChild(new Menu(Config.width - (Game.PADDING * 2), item => this.switchContent(item)))
         this.stage.addChild(this._content)
         this.stage.addChild(this._ui)
         this.addFrameRateDisplay()
@@ -47,8 +50,8 @@ export class Game {
             size = { width: Config.width, height: Config.height }
         }
         this._background.setSize(size.width, size.height)
-        this._fullScreenButton.position.set(size.width - this._fullScreenButton.width - 10, 10)
-        this._menu.position.set((size.width - this._menu.width) / 2, size.height - this._menu.height - 10)
+        this._fullScreenButton.position.set(size.width - this._fullScreenButton.width - Game.PADDING, Game.PADDING)
+        this._menu.position.set((size.width - this._menu.width) / 2, size.height - this._menu.height - Game.PADDING)
         this._currentContent?.resize(size.width, size.height)
     }
 
@@ -85,7 +88,7 @@ export class Game {
 
     private addFrameRateDisplay() {
         const text = new Text({ style: new TextStyle({ fill: 0xFFFFFF, fontWeight: "400", fontSize: 12 }) })
-        text.position.set(10)
+        text.position.set(Game.PADDING)
         this._ui.addChild(text)
         this.ticker.add(ticker => { text.text = "FPS: " + ticker.FPS.toFixed(2) })
     }

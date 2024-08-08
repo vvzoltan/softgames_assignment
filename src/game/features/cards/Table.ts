@@ -12,7 +12,9 @@ export class Table extends Container implements GameContent {
     private _interval?: NodeJS.Timeout
     private _timelines: gsap.core.Timeline[] = []
 
-    private static CARDS = 144
+    static readonly CARDS = 144
+    static readonly DRAW_INTERVAL = 1_000
+    static readonly CARD_MOVE_DURATION = 2
 
 
     constructor() {
@@ -22,7 +24,7 @@ export class Table extends Container implements GameContent {
         this._deckRight = new Deck()
         this._deckLeft.cards.forEach(card => {this.addChild(card)})
 
-        this._interval = setInterval(() => { this.moveCard() }, 1_000)
+        this._interval = setInterval(() => { this.moveCard() }, Table.DRAW_INTERVAL)
     }
 
 
@@ -59,13 +61,13 @@ export class Table extends Container implements GameContent {
                 if (index > -1) this._timelines.splice(index, 1)
             }
         })
-        timeline.to(card.position, { x: destination.x, duration: 2, ease: Cubic.easeInOut }, 0)
-        timeline.to(card.position, { y: Math.max(card.y, destination.y) + 50, duration: 1, ease: Sine.easeOut }, 0)
-        timeline.to(card.position, { y: destination.y, duration: 1, ease: Sine.easeIn }, 1)
+        timeline.to(card.position, { x: destination.x, duration: Table.CARD_MOVE_DURATION, ease: Cubic.easeInOut }, 0)
+        timeline.to(card.position, { y: Math.max(card.y, destination.y) + 50, duration: Table.CARD_MOVE_DURATION / 2, ease: Sine.easeOut }, 0)
+        timeline.to(card.position, { y: destination.y, duration: Table.CARD_MOVE_DURATION / 2, ease: Sine.easeIn }, Table.CARD_MOVE_DURATION / 2)
         timeline.call(() => {
             card.flip()
             this.setChildIndex(card, this.children.length - 1)
-        }, [], 0.8)
+        }, [], (Table.CARD_MOVE_DURATION / 2) - (Card.FLIP_DURATION / 2))
         timeline.play()
     }
 
