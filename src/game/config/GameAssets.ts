@@ -15,6 +15,8 @@ export const gameAssets = {
         fuzzy: "fuzzy.png",
         goomba: "goomba.png",
         mushroom: "mushroom.png"
-    }
+    },
+
+    particles: ["particle1.png", "particle2.png"]
 
 }

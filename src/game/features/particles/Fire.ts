@@ -1,6 +1,7 @@
 import { Emitter, EmitterConfigV3 } from "@barvynkoa/particle-emitter";
 import { Container, Ticker } from "pixi.js";
 import { GameContent } from "../GameContent";
+import { gameAssets } from "../../config/GameAssets";
 
 
 export class Fire extends Container implements GameContent {
@@ -43,7 +44,7 @@ export class Fire extends Container implements GameContent {
                 {
                     type: 'textureRandom',
                     config: {
-                        textures: ["particle1.png", "particle2.png"],
+                        textures: gameAssets.particles,
                     }
                 },
                 {
