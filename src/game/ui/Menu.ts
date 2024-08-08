@@ -20,7 +20,7 @@ export class Menu extends Container {
         this._items.forEach((value, index) => {
             const button = new MenuButton(width / 3, 50, value)
             button.x = (width / 3) * index
-            button.on("click", () => { 
+            button.on("pointerup", () => { 
                 if (this._selected) {
                     this._selected.onDeselected()
                 }
@@ -96,7 +96,7 @@ class MenuButton extends Graphics {
         this.enabled = false
     }
 
-    
+
     onDeselected() {
         this.onOut()
         this.enabled = true

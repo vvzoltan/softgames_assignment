@@ -25,7 +25,7 @@ window.addEventListener('load', async () => {
         app.renderer.resize(window.innerWidth, window.innerHeight);
     });
 
-    await Assets.load(['/public/assets/sheet.json'])
+    await Assets.load(['/assets/sheet.json'])
     new Game(app.stage, app.ticker)
 
 });

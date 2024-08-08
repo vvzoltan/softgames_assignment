@@ -1,4 +1,4 @@
-import { Container, Ticker, Text, TextStyle, TilingSprite, Texture } from "pixi.js";
+import { Container, Ticker, Text, TextStyle, Texture, Sprite } from "pixi.js";
 import { TextContent } from "./game/features/text/TextContent";
 import { Fire } from "./game/features/particles/Fire";
 import { Menu, MenuItem } from "./game/ui/Menu";
@@ -12,7 +12,7 @@ export class Game {
 
     private readonly _content = new Container()
     private readonly _ui = new Container()
-    private readonly _background: TilingSprite
+    private readonly _background: Sprite
     private readonly _fullScreenButton: FullScreenButton
     private readonly _menu: Menu
 
@@ -20,7 +20,8 @@ export class Game {
 
 
     constructor(private readonly stage: Container, private readonly ticker: Ticker) {
-        this._background = this.stage.addChild(new TilingSprite({ texture: Texture.from("tile.png"), width: Config.width, height: Config.height }))
+        this._background = this.stage.addChild(new Sprite({ texture: Texture.from("background.jpg"), width: Config.width, height: Config.height }))
+        this._background.alpha = 0.5
         this._fullScreenButton = this._ui.addChild(this.getFullScreenButton())
         this._menu = this._ui.addChild(new Menu(Config.width - 20, item => this.switchContent(item)))
         this.stage.addChild(this._content)
@@ -45,7 +46,7 @@ export class Game {
         } else {
             size = { width: Config.width, height: Config.height }
         }
-        this._background.setSize(window.innerWidth, window.innerHeight)
+        this._background.setSize(size.width, size.height)
         this._fullScreenButton.position.set(size.width - this._fullScreenButton.width - 10, 10)
         this._menu.position.set((size.width - this._menu.width) / 2, size.height - this._menu.height - 10)
         this._currentContent?.resize(size.width, size.height)

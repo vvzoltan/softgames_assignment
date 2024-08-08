@@ -9028,7 +9028,8 @@ class Game {
         this.ticker = ticker;
         this._content = new pixi_js_1.Container();
         this._ui = new pixi_js_1.Container();
-        this._background = this.stage.addChild(new pixi_js_1.TilingSprite({ texture: pixi_js_1.Texture.from("tile.png"), width: Config_1.Config.width, height: Config_1.Config.height }));
+        this._background = this.stage.addChild(new pixi_js_1.Sprite({ texture: pixi_js_1.Texture.from("background.jpg"), width: Config_1.Config.width, height: Config_1.Config.height }));
+        this._background.alpha = 0.5;
         this._fullScreenButton = this._ui.addChild(this.getFullScreenButton());
         this._menu = this._ui.addChild(new Menu_1.Menu(Config_1.Config.width - 20, item => this.switchContent(item)));
         this.stage.addChild(this._content);
@@ -9051,7 +9052,7 @@ class Game {
         else {
             size = { width: Config_1.Config.width, height: Config_1.Config.height };
         }
-        this._background.setSize(window.innerWidth, window.innerHeight);
+        this._background.setSize(size.width, size.height);
         this._fullScreenButton.position.set(size.width - this._fullScreenButton.width - 10, 10);
         this._menu.position.set((size.width - this._menu.width) / 2, size.height - this._menu.height - 10);
         (_a = this._currentContent) === null || _a === void 0 ? void 0 : _a.resize(size.width, size.height);
@@ -9533,7 +9534,7 @@ class FullScreenButton extends pixi_js_1.Sprite {
         this.texture = this._enterIcon;
         this.interactive = true;
         this.cursor = "pointer";
-        this.on("click", () => {
+        this.on("pointerup", () => {
             this._isInFullScreen = !this._isInFullScreen;
             this.texture = this._isInFullScreen ? this._exitIcon : this._enterIcon;
             onToggle(this._isInFullScreen);
@@ -9563,7 +9564,7 @@ class Menu extends pixi_js_1.Container {
         this._items.forEach((value, index) => {
             const button = new MenuButton(width / 3, 50, value);
             button.x = (width / 3) * index;
-            button.on("click", () => {
+            button.on("pointerup", () => {
                 if (this._selected) {
                     this._selected.onDeselected();
                 }
@@ -9661,7 +9662,7 @@ window.addEventListener('load', () => __awaiter(void 0, void 0, void 0, function
     window.addEventListener('resize', () => {
         app.renderer.resize(window.innerWidth, window.innerHeight);
     });
-    yield pixi_js_1.Assets.load(['/public/assets/sheet.json']);
+    yield pixi_js_1.Assets.load(['/assets/sheet.json']);
     new game_1.Game(app.stage, app.ticker);
 }));
 

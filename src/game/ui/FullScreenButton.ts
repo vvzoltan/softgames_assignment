@@ -15,7 +15,7 @@ export class FullScreenButton extends Sprite {
         this.texture = this._enterIcon
         this.interactive = true
         this.cursor = "pointer"
-        this.on("click", () => {
+        this.on("pointerup", () => {
             this._isInFullScreen = !this._isInFullScreen
             this.texture = this._isInFullScreen ? this._exitIcon : this._enterIcon
             onToggle(this._isInFullScreen)
